@@ -6,7 +6,7 @@ Programmer: Uzia Peer. Date: 2026-10-12.
 
 from functools import lru_cache
 
-from graphs.theta_star import CornerGrid, Point, _search
+from graphs.theta_star import CornerGrid, _search, grid_point
 
 
 class CachedCornerGrid(CornerGrid):
@@ -25,7 +25,7 @@ class CachedCornerGrid(CornerGrid):
         super().__init__(cells)
         self._valid = lru_cache(maxsize=32768)(super().valid_corner)
 
-    def valid_corner(self, point: Point) -> bool:
+    def valid_corner(self, point: grid_point) -> bool:
         """Cache valid integer corners; keep normal handling for other inputs.
 
         >>> CachedCornerGrid([[0]]).valid_corner((0, 0))
@@ -39,7 +39,10 @@ class CachedCornerGrid(CornerGrid):
             return super().valid_corner(point)
         return self._valid(point)
 
-def theta_star_cached(cells: list[list[int]], start: Point, goal: Point) -> list[Point]:
+
+def theta_star_cached(
+    cells: list[list[int]], start: grid_point, goal: grid_point
+) -> list[grid_point]:
     """Run the unchanged Basic Theta* search with cached visibility.
 
     >>> theta_star_cached([[0]], (0, 0), (1, 1))
